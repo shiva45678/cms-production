@@ -1,16 +1,11 @@
 [
   {
-    "relation": [
-      "delegate_permission/common.handle_all_urls",
-      "delegate_permission/common.get_login_creds"
-    ],
+    "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "in.newtons.neetpg.twa",
-      "sha256_cert_fingerprints": [
-        "F8:EE:D0:16:9F:E6:37:61:52:61:56:69:0C:57:10:A3:63:13:38:4A:F7:D5:9A:C2:2D:DE:E0:06:1C:7A:22:D2",
-        "DB:1A:63:A9:86:3D:46:67:CB:35:A7:E9:6D:79:42:9F:48:10:8B:46:81:3A:91:13:86:52:80:21:61:67:D6:87"
-      ]
+      "package_name": "in.newtons.cms.twa",
+      "sha256_cert_fingerprints":
+        ["CC:2E:7B:67:A2:2F:F2:97:87:53:3C:07:EF:6F:00:D5:EB:C6:A0:F9:84:90:AE:EB:92:63:FF:F6:79:8E:6B:B9"]
     }
   }
 ]
