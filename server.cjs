@@ -189,6 +189,22 @@ app.post("/api/ai/suggest-treatment", async (req, res) => {
     });
   }
 });
+var assetlinks = [
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "in.newtons.cms.twa",
+      "sha256_cert_fingerprints": [
+        "CC:2E:7B:67:A2:2F:F2:97:87:53:3C:07:EF:6F:00:D5:EB:C6:A0:F9:84:90:AE:EB:92:63:FF:F6:79:8E:6B:B9"
+      ]
+    }
+  }
+];
+app.get("/.well-known/assetlinks.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.json(assetlinks);
+});
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await (0, import_vite.createServer)({
