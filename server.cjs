@@ -205,6 +205,14 @@ app.get("/.well-known/assetlinks.json", (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.json(assetlinks);
 });
+app.get("/api/firebase-config", (req, res) => {
+  try {
+    const configPath = import_path.default.join(process.cwd(), "firebase-applet-config.json");
+    res.sendFile(configPath);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load Firebase config" });
+  }
+});
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await (0, import_vite.createServer)({
