@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
 Sitemap: https://dr.newtons.in/sitemap.xml

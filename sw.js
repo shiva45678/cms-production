@@ -1,1 +1,84 @@
-if(!self.define){let e,s={};const n=(n,i)=>(n=new URL(n+".js",i).href,s[n]||new Promise(s=>{if("document"in self){const e=document.createElement("script");e.src=n,e.onload=s,document.head.appendChild(e)}else e=n,importScripts(n),s()}).then(()=>{let e=s[n];if(!e)throw new Error(`Module ${n} didn’t register its module`);return e}));self.define=(i,r)=>{const o=e||("document"in self?document.currentScript.src:"")||location.href;if(s[o])return;let t={};const l=e=>n(e,o),c={module:{uri:o},exports:t,require:l};s[o]=Promise.all(i.map(e=>c[e]||l(e))).then(e=>(r(...e),t))}}define(["./workbox-9c191d2f"],function(e){"use strict";self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"index.html",revision:"b9ce4d1a51a4e47b2da6fc0ba1ca0bef"},{url:"assets/workbox-window.prod.es5-BBnX5xw4.js",revision:null},{url:"assets/index-rYwSr8Sq.js",revision:null},{url:"assets/index-CGsXN7Sr.css",revision:null},{url:"logo.png",revision:"7e90b691618dc03d465e5d4d26cb9fdc"},{url:"manifest.webmanifest",revision:"5e5774ca22c9c9002cf3d0bc98f7a426"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))});
+const CACHE_NAME = 'newtons-neetpg-cache-v2';
+const ASSETS_TO_CACHE = [
+  '/',
+  '/index.html',
+  '/icon-512.png',
+  '/manifest.json'
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    }).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  // Only intercept same-origin HTTP/HTTPS requests
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  const url = new URL(event.request.url);
+
+  // 1. Network-First Strategy for Data Files (.csv, .json)
+  // This ensures we always get the latest questions when online, and prevents
+  // caching broken/blocked responses permanently.
+  if (url.pathname.endsWith('.csv') || url.pathname.endsWith('.json') || url.pathname.includes('/.well-known/')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Fall back to cache if offline or blocked
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+
+  // 2. Stale-While-Revalidate or Cache-First for static UI assets (.html, .js, .css, images)
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch((err) => {
+          console.warn('Service Worker network fetch failed:', err);
+          return cachedResponse; // fallback if network fails
+        });
+
+      // Return cached response immediately if available, otherwise wait for network
+      return cachedResponse || fetchPromise;
+    })
+  );
+});

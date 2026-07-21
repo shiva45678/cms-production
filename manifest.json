@@ -1,0 +1,33 @@
+{
+  "name": "Newtons NEET PG",
+  "short_name": "Newtons NEET PG",
+  "description": "Adaptive Study & QBank Platform by Newtons AI",
+  "id": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "in.newtons.neetpg.twa",
+      "url": "https://play.google.com/store/apps/details?id=in.newtons.neetpg.twa"
+    }
+  ],
+  "prefer_related_applications": true
+}
